@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BMW Showroom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --studio: #eceef1;
+    --paper: #f8f9fa;
+    --ink: #0f141b;
+    --steel: #5b6673;
+    --line: #d5dae0;
+    --blue: #1c69d4;
+    --m-light: #81c4ff;
+    --m-dark: #16588e;
+    --m-red: #e7222e;
+    --font: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--studio); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+  .wrap { width: min(1240px, 92vw); margin: 0 auto; }
+
+  .stripe { height: 6px; background: linear-gradient(90deg, var(--m-light) 0 33.3%, var(--m-dark) 33.3% 66.6%, var(--m-red) 66.6%); }
+
+  header .wrap { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; }
+  .brand { font-weight: 800; font-stretch: 125%; font-size: 1.2rem; text-decoration: none; letter-spacing: .02em; }
+  header nav { display: flex; gap: 28px; font-weight: 500; }
+  header nav a { text-decoration: none; color: var(--steel); }
+  header nav a:hover { color: var(--ink); }
+
+  /* hero */
+  .hero { padding: 56px 0 72px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 800; font-stretch: 112%; line-height: .98; letter-spacing: -.025em; }
+  .hero p { margin-top: 24px; max-width: 46ch; color: var(--steel); font-size: 1.1rem; }
+  .cta { display: inline-block; margin-top: 32px; padding: 15px 30px; background: var(--ink); color: #fff; font-weight: 600; text-decoration: none; border-radius: 2px; transition: background .2s; }
+  .cta:hover { background: var(--blue); }
+  .hero-copy { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  .feature { animation: rise .8s .15s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+  .feature { background: var(--ink); color: #fff; border-radius: 4px; overflow: hidden; cursor: pointer; text-align: left; border: 0; width: 100%; font: inherit; }
+  .feature .photo { aspect-ratio: 16 / 10; background: #1b2330; }
+  .feature img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .feature .cap { display: flex; justify-content: space-between; align-items: end; gap: 16px; padding: 20px 24px 24px; }
+  .feature .cap b { display: block; font-size: 1.35rem; font-weight: 700; font-stretch: 105%; }
+  .feature .cap span { color: #9aa6b4; font-size: .92rem; }
+  .feature .hp { font-size: 2.6rem; font-weight: 800; font-stretch: 110%; line-height: 1; text-align: right; }
+  .feature .hp small { display: block; font-size: .8rem; font-weight: 500; color: #9aa6b4; margin-top: 4px; }
+
+  /* toolbar */
+  #models { padding-bottom: 80px; scroll-margin-top: 12px; }
+  .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding-bottom: 20px; border-bottom: 2px solid var(--ink); }
+  .section-head h2 { font-size: 2rem; font-weight: 800; font-stretch: 108%; letter-spacing: -.01em; }
+  #count { color: var(--steel); }
+  .tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 20px 0 28px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 100%; }
+  .chip { font: inherit; font-weight: 500; padding: 8px 18px; border: 1px solid var(--line); background: var(--paper); border-radius: 999px; cursor: pointer; color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .tools input, .tools select { font: inherit; padding: 10px 14px; border: 1px solid var(--line); background: var(--paper); border-radius: 2px; color: var(--ink); }
+  .tools input { flex: 1 1 240px; }
+
+  /* grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px 24px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; cursor: pointer; padding: 0; }
+  .card:hover { border-color: var(--ink); }
+  .card .photo { aspect-ratio: 4 / 3; background: var(--line); }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .card h3 { font-size: 1.15rem; font-weight: 700; font-stretch: 105%; line-height: 1.25; }
+  .specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .specs dt { font-size: .78rem; color: var(--steel); }
+  .specs dd { font-weight: 600; font-size: .95rem; }
+  .price { margin-top: auto; font-size: 1.3rem; font-weight: 700; font-stretch: 105%; }
+  .price small { font-weight: 400; font-size: .85rem; color: var(--steel); margin-left: 6px; }
+  .empty { grid-column: 1 / -1; padding: 56px 0; color: var(--steel); }
+
+  /* dialog */
+  dialog { border: 0; border-radius: 4px; width: min(860px, 94vw); padding: 0; background: var(--paper); color: var(--ink); margin: auto; }
+  dialog::backdrop { background: rgba(15, 20, 27, .62); }
+  dialog[open] { animation: pop .25s ease-out; }
+  @keyframes pop { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+  .d-grid { display: grid; grid-template-columns: 1.1fr 1fr; }
+  .d-photo { background: var(--line); min-height: 280px; }
+  .d-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .d-info { padding: 32px 30px; display: flex; flex-direction: column; gap: 16px; }
+  .d-info h3 { font-size: 1.7rem; font-weight: 800; font-stretch: 108%; line-height: 1.1; }
+  .d-info p { color: var(--steel); }
+  .d-info dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .d-info dt { color: var(--steel); }
+  .d-info dd { font-weight: 600; text-align: right; }
+  .d-price { font-size: 1.6rem; font-weight: 800; font-stretch: 108%; }
+  .d-actions { display: flex; gap: 10px; margin-top: auto; }
+  .d-actions .cta { margin: 0; border: 0; cursor: pointer; font: inherit; font-weight: 600; flex: 1; }
+  .ghost { background: transparent; border: 1px solid var(--line); padding: 15px 22px; border-radius: 2px; font: inherit; cursor: pointer; color: var(--ink); }
+  .ghost:hover { border-color: var(--ink); }
+
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); background: var(--ink); color: #fff; padding: 14px 24px; border-radius: 2px; opacity: 0; pointer-events: none; transition: .25s; z-index: 10; }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  footer { background: var(--ink); color: #9aa6b4; padding: 36px 0 44px; font-size: .88rem; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  footer b { color: #fff; font-stretch: 120%; }
+
+  @media (max-width: 860px) {
+    .hero .wrap, .d-grid { grid-template-columns: 1fr; }
+    .hero { padding: 28px 0 48px; }
+    header nav { gap: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#">BMW Showroom</a>
+    <nav aria-label="Main"><a href="#models">Models</a><a href="#models" id="navDrive">Test drive</a></nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1>Drive it before you decide.</h1>
+      <p>Browse the full BMW range, compare power and price side by side, then book a test drive for the one that feels right.</p>
+      <a class="cta" href="#models">Browse models</a>
+    </div>
+    <button class="feature" id="feature" aria-label="Open featured model" hidden></button>
+  </div>
+</section>
+
+<main id="models">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>All models</h2>
+      <p id="count" aria-live="polite">Loading models...</p>
+    </div>
+    <div class="tools">
+      <div class="chips" id="chips" role="group" aria-label="Filter by series"></div>
+      <input id="q" type="search" placeholder="Search by model name" aria-label="Search models">
+      <select id="fuel" aria-label="Fuel type">
+        <option value="">Any fuel</option>
+      </select>
+      <select id="sort" aria-label="Sort models">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: low to high</option>
+        <option value="price-desc">Price: high to low</option>
+        <option value="hp-desc">Power: high to low</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>BMW Showroom</b><br>A learning project. Not affiliated with BMW AG. Photos belong to their owners.</div>
+    <div>Prices are sample values.</div>
+  </div>
+</footer>
+<div class="stripe"></div>
+
+<dialog id="dlg" aria-labelledby="d-name"></dialog>
+<div id="toast" role="status"></div>
+
+<script>
+  // Local dev: if the page is served on :3000, call the backend on :8080.
+  // Behind nginx / Ingress the relative path is used.
+  const API = location.port === '3000' ? 'http://localhost:8080/api/cars' : '/api/cars';
+
+  const FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#d5dae0"/>' +
+    '<text x="200" y="158" font-family="sans-serif" font-size="28" fill="#5b6673" text-anchor="middle">Photo coming soon</text></svg>');
+
+  const $ = id => document.getElementById(id);
+  const state = { cars: [], series: 'All' };
+
+  const esc = s => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+  const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+  function short(n) {
+    n = Number(n);
+    if (n >= 1e7) return '\u20B9' + (n / 1e7).toFixed(2).replace(/\.?0+$/, '') + ' crore';
+    return '\u20B9' + (n / 1e5).toFixed(0) + ' lakh';
+  }
+  const img = (c, alt) => `<img src="${esc(c.imageUrl || FALLBACK)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${FALLBACK}'">`;
+
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.id); toast.id = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function card(c) {
+    return `<button class="card" data-id="${c.id}">
+      <div class="photo">${img(c, c.modelName)}</div>
+      <div class="body">
+        <h3>${esc(c.modelName)}</h3>
+        <dl class="specs">
+          <div><dt>Power</dt><dd>${c.horsepower ?? '-'} hp</dd></div>
+          <div><dt>Fuel</dt><dd>${esc(c.fuelType) || '-'}</dd></div>
+          <div><dt>Body</dt><dd>${esc(c.bodyType) || '-'}</dd></div>
+        </dl>
+        <div class="price">${short(c.price)}<small>ex-showroom</small></div>
+      </div>
+    </button>`;
+  }
+
+  function visible() {
+    const q = $('q').value.trim().toLowerCase();
+    const fuel = $('fuel').value;
+    let list = state.cars.filter(c =>
+      (state.series === 'All' || c.series === state.series) &&
+      (!fuel || c.fuelType === fuel) &&
+      (!q || c.modelName.toLowerCase().includes(q)));
+    const s = $('sort').value;
+    if (s === 'price-asc') list.sort((a, b) => a.price - b.price);
+    if (s === 'price-desc') list.sort((a, b) => b.price - a.price);
+    if (s === 'hp-desc') list.sort((a, b) => (b.horsepower || 0) - (a.horsepower || 0));
+    return list;
+  }
+
+  function render() {
+    const list = visible();
+    $('count').textContent = `${list.length} of ${state.cars.length} models`;
+    $('grid').innerHTML = list.length ? list.map(card).join('')
+      : '<p class="empty">No models match these filters. Clear the search or pick another series.</p>';
+  }
+
+  function buildFilters() {
+    const series = ['All', ...new Set(state.cars.map(c => c.series))];
+    $('chips').innerHTML = series.map(s =>
+      `<button class="chip" aria-pressed="${s === state.series}" data-s="${esc(s)}">${esc(s)}</button>`).join('');
+    [...new Set(state.cars.map(c => c.fuelType).filter(Boolean))].forEach(f => {
+      const o = document.createElement('option'); o.value = f; o.textContent = f; $('fuel').appendChild(o);
+    });
+  }
+
+  function featured() {
+    const top = [...state.cars].sort((a, b) => (b.horsepower || 0) - (a.horsepower || 0))[0];
+    if (!top) return;
+    const f = $('feature');
+    f.dataset.id = top.id;
+    f.innerHTML = `<div class="photo">${img(top, top.modelName)}</div>
+      <div class="cap"><div><b>${esc(top.modelName)}</b><span>Most powerful in the range</span></div>
+      <div class="hp">${top.horsepower}<small>horsepower</small></div></div>`;
+    f.hidden = false;
+  }
+
+  function openCar(id) {
+    const c = state.cars.find(x => x.id === Number(id));
+    if (!c) return;
+    const dlg = $('dlg');
+    dlg.innerHTML = `<div class="d-grid">
+      <div class="d-photo">${img(c, c.modelName)}</div>
+      <div class="d-info">
+        <h3 id="d-name">${esc(c.modelName)}</h3>
+        <p>${esc(c.description)}</p>
+        <dl>
+          <dt>Series</dt><dd>${esc(c.series)}</dd>
+          <dt>Body</dt><dd>${esc(c.bodyType) || '-'}</dd>
+          <dt>Fuel</dt><dd>${esc(c.fuelType) || '-'}</dd>
+          <dt>Power</dt><dd>${c.horsepower ?? '-'} hp</dd>
+          <dt>Model year</dt><dd>${c.modelYear ?? '-'}</dd>
+        </dl>
+        <div class="d-price">${inr.format(c.price)}</div>
+        <div class="d-actions">
+          <button class="cta" id="book">Book a test drive</button>
+          <button class="ghost" id="close">Close</button>
+        </div>
+      </div></div>`;
+    $('close').onclick = () => dlg.close();
+    $('book').onclick = () => toast('Test drive booking opens soon. We will wire it up next.');
+    dlg.showModal();
+  }
+
+  $('dlg').addEventListener('click', e => { if (e.target === $('dlg')) $('dlg').close(); });
+  $('grid').addEventListener('click', e => { const b = e.target.closest('.card'); if (b) openCar(b.dataset.id); });
+  $('feature').addEventListener('click', () => openCar($('feature').dataset.id));
+  $('chips').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    state.series = b.dataset.s;
+    document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  });
+  ['q', 'fuel', 'sort'].forEach(id => $(id).addEventListener('input', render));
+
+  (async function init() {
+    try {
+      const res = await fetch(API);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      state.cars = await res.json();
+      buildFilters(); featured(); render();
+    } catch (e) {
+      $('count').textContent = 'Could not load models.';
+      $('grid').innerHTML = `<p class="empty">The catalog service did not respond (${esc(e.message)}). Check that the backend is running on port 8080, then reload.</p>`;
+    }
+  })();
+</script>
+</body>
+</html>

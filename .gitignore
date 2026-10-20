@@ -1,0 +1,42 @@
+# ---- Secrets (never commit) ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets.yaml
+*-secret.yaml
+credentials
+.aws/
+
+# ---- Java / Maven ----
+target/
+*.class
+*.jar
+*.log
+HELP.md
+
+# ---- Node / frontend tooling (if added later) ----
+node_modules/
+dist/
+
+# ---- IDE / OS ----
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ---- Terraform (infra repo) ----
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+crash.log
+.terraformrc
+
+# ---- Local data ----
+pgdata/
+*.sql.bak

@@ -1,0 +1,13 @@
+INSERT INTO cars (model_name, series, body_type, fuel_type, model_year, horsepower, price, description, image_url) VALUES
+('BMW 220i Gran Coupe', '2 Series', 'Gran Coupe', 'Petrol', 2026, 156, 4400000.00, 'Compact four-door coupe with sporty looks.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsodLxapQfsllDkxLV9VU2bH9VYigNq9KkZCukXjmYsg&s=10'),
+('BMW 330i', '3 Series', 'Sedan', 'Petrol', 2026, 255, 5900000.00, 'Sporty compact executive sedan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7Ks0Xb8z5zSxahTAlJ5bRrPXN7quyQv0Xt6ZqIDN2RQ&s=10'),
+('BMW 520i', '5 Series', 'Sedan', 'Petrol', 2026, 190, 7200000.00, 'Executive business sedan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzKxmFeHSX-H-3G0sj1-rE4OJtb2MkOaQA1-9RhHB1zg&s=10'),
+('BMW 740i', '7 Series', 'Sedan', 'Petrol', 2026, 380, 17000000.00, 'Flagship luxury sedan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2hYD5enITZw1l3p68MxIsRn6mIB-5U4MCjKq7Im5ZhQ&s=10'),
+('BMW X1 sDrive18i', 'X', 'SUV', 'Petrol', 2026, 136, 5000000.00, 'Compact premium SUV.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9RzdxU1hzgx-eI8HMR2_Q4QAp7KAqj_E3xoS7y0uRYA&s=10'),
+('BMW X3 xDrive30i', 'X', 'SUV', 'Petrol', 2026, 255, 7500000.00, 'Versatile mid-size SUV.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4Ce_zDH81hAfbBXDvt43PurMpZNT1Ypw_hQwboe1yDg&s=10'),
+('BMW X5 xDrive40i', 'X', 'SUV', 'Petrol', 2026, 375, 10500000.00, 'Premium mid-size SUV.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSttDsSlzOO5-A_ANmHTaOWSvPYQYqo1pPw3F0TvsQhQg&s=10'),
+('BMW X7 xDrive40i', 'X', 'SUV', 'Petrol', 2026, 380, 14500000.00, 'Full-size luxury SUV with three rows.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-2ON2Ngrt0AVrgd9exBwAng5O1IK9HQb5YBrBIbRG4Q&s=10'),
+('BMW M2', 'M', 'Coupe', 'Petrol', 2026, 473, 10000000.00, 'Compact high-performance coupe.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR8YVHyo1-3hRsvLJGSF_I-0xhDGt9i5FC3sUTzOynow&s=10'),
+('BMW M4 Competition', 'M', 'Coupe', 'Petrol', 2026, 503, 15300000.00, 'High-performance coupe.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKI9bAJ6s5--UJ5qGay8j_V3JoGG0kwSLINzZ3e44DXA&s=10'),
+('BMW i4 eDrive40', 'i', 'Gran Coupe', 'Electric', 2026, 335, 7200000.00, 'All-electric Gran Coupe.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnLmYeLshO1Bh7r-4hv9R352b6OnNMkA6jfBLJCA9WoQ&s=10'),
+('BMW iX xDrive50', 'i', 'SUV', 'Electric', 2026, 516, 14000000.00, 'All-electric luxury SUV.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpDZWHdQfeAmffN8V5AZFLU7QzZIbCL3T9hebwICuKlA&s=10');
