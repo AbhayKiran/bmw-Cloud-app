@@ -1,50 +1,46 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
 stages:
   - build
 
-variables:
-  AWS_DEFAULT_REGION: "ap-south-1"
-  ECR_REGISTRY: "699960288562.dkr.ecr.ap-south-1.amazonaws.com"
-  AWS_ROLE_ARN: "arn:aws:iam::699960288562:role/GitLabCI-OIDCRole"
-
-default:
-  id_tokens:
-    AWS_JWT_TOKEN:
-      aud: "https://gitlab.com"
-
 build_and_push:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  id_tokens:
+    AWS_JWT_TOKEN:
+      aud: https://gitlab.com
   before_script:
-    - apk add --no-cache aws-cli
-    
-    # GAP A SOLVED: Dynamically exchange GitLab token for temporary AWS credentials (OIDC)
+    - apk add --no-cache aws-cli curl bash
     - >
-      ASSUME_ROLE_OUTPUT=$(aws sts assume-role-with-web-identity \
-        --role-arn $AWS_ROLE_ARN \
-        --role-session-name "GitLabCISession" \
-        --web-identity-token $AWS_JWT_TOKEN \
-        --duration-seconds 3600 \
-        --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
-        --output text)
-        
-    - export AWS_ACCESS_KEY_ID=$(echo $ASSUME_ROLE_OUTPUT | awk '{print $1}')
-    - export AWS_SECRET_ACCESS_KEY=$(echo $ASSUME_ROLE_OUTPUT | awk '{print $2}')
-    - export AWS_SESSION_TOKEN=$(echo $ASSUME_ROLE_OUTPUT | awk '{print $3}')
-
-    # Log into AWS ECR
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-
+      export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/aws-token &&
+      echo "${AWS_JWT_TOKEN}" > ${AWS_WEB_IDENTITY_TOKEN_FILE} &&
+      export AWS_ROLE_ARN="arn:aws:iam::699960288562:role/GitLabCI-OIDCRole" &&
+      export AWS_REGION="ap-south-1"
   script:
-    # GAP B SOLVED: Build and push Backend using Git Commit SHA + latest tag
-    - echo "Building backend with commit SHA: $CI_COMMIT_SHA"
-    - docker build -t $ECR_REGISTRY/bmw-backend:$CI_COMMIT_SHA -t $ECR_REGISTRY/bmw-backend:latest ./backend
-    - docker push $ECR_REGISTRY/bmw-backend:$CI_COMMIT_SHA
-    - docker push $ECR_REGISTRY/bmw-backend:latest
-
-    # Build and push Frontend using Git Commit SHA + latest tag
-    - echo "Building frontend with commit SHA: $CI_COMMIT_SHA"
-    - docker build -t $ECR_REGISTRY/bmw-frontend:$CI_COMMIT_SHA -t $ECR_REGISTRY/bmw-frontend:latest ./frontend
-    - docker push $ECR_REGISTRY/bmw-frontend:$CI_COMMIT_SHA
-    - docker push $ECR_REGISTRY/bmw-frontend:latest
+    - echo "Assuming IAM Role via OIDC..."
+    - >
+      CREDENTIALS=$(aws sts assume-role-with-web-identity 
+      --role-arn ${AWS_ROLE_ARN} 
+      --role-session-name "GitLabCI-Session-${CI_COMMIT_SHA}" 
+      --web-identity-token-file ${AWS_WEB_IDENTITY_TOKEN_FILE} 
+      --duration-seconds 3600 
+      --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" 
+      --output text)
+    - export AWS_ACCESS_KEY_ID=$(echo $CREDENTIALS | awk '{print $1}')
+    - export AWS_SECRET_ACCESS_KEY=$(echo $CREDENTIALS | awk '{print $2}')
+    - export AWS_SESSION_TOKEN=$(echo $CREDENTIALS | awk '{print $3}')
+    
+    # Login to Amazon ECR
+    - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 699960288562.dkr.ecr.ap-south-1.amazonaws.com
+    
+    # Build and Push Backend
+    - docker build -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:$CI_COMMIT_SHA -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:latest ./backend
+    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:$CI_COMMIT_SHA
+    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:latest
+    
+    # Build and Push Frontend
+    - docker build -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:latest ./frontend
+    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA
+    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:latest
