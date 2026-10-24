@@ -34,6 +34,25 @@ resource "aws_iam_role_policy_attachment" "ecr_power_user" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
 }
 
+# Remove the AmazonEKSClusterPolicy attachment, and use this instead:
+resource "aws_iam_role_policy" "gitlab_eks_describe" {
+  name = "GitLabEKSDescribePolicy"
+  role = aws_iam_role.gitlab_ci_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "eks:DescribeCluster"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 output "gitlab_role_arn" {
   value = aws_iam_role.gitlab_ci_role.arn
 }
