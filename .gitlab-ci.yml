@@ -13,26 +13,22 @@ build_and_push:
       aud: https://gitlab.com
   before_script:
     - apk add --no-cache aws-cli curl bash
-    - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/aws-token
-    - echo "${AWS_JWT_TOKEN}" > ${AWS_WEB_IDENTITY_TOKEN_FILE}
-    - export AWS_ROLE_ARN="arn:aws:iam::699960288562:role/GitLabCI-OIDCRole"
-    - export AWS_REGION="ap-south-1"
   script:
     - echo "Assuming IAM Role via OIDC..."
-    - CREDENTIALS=$(aws sts assume-role-with-web-identity --role-arn ${AWS_ROLE_ARN} --role-session-name "GitLabCI-Session-${CI_COMMIT_SHA}" --web-identity-token-file ${AWS_WEB_IDENTITY_TOKEN_FILE} --duration-seconds 3600 --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)
+    - CREDENTIALS=$(aws sts assume-role-with-web-identity --role-arn ${AWS_ROLE_ARN} --role-session-name "GitLabCI-Session-${CI_COMMIT_SHA}" --web-identity-token "${AWS_JWT_TOKEN}" --duration-seconds 3600 --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)
     - export AWS_ACCESS_KEY_ID=$(echo $CREDENTIALS | awk '{print $1}')
     - export AWS_SECRET_ACCESS_KEY=$(echo $CREDENTIALS | awk '{print $2}')
     - export AWS_SESSION_TOKEN=$(echo $CREDENTIALS | awk '{print $3}')
     
     # Login to Amazon ECR
-    - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 699960288562.dkr.ecr.ap-south-1.amazonaws.com
+    - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
     
     # Build and Push Backend
-    - docker build -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:$CI_COMMIT_SHA -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:latest ./backend
-    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:$CI_COMMIT_SHA
-    - docker push 699960288562.dkr.ecr.ecr.ap-south-1.amazonaws.com/bmw-backend:latest
+    - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-backend:$CI_COMMIT_SHA -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-backend:latest ./backend
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-backend:$CI_COMMIT_SHA
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-backend:latest
     
     # Build and Push Frontend
-    - docker build -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA -t 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:latest ./frontend
-    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA
-    - docker push 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:latest
+    - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest ./frontend
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest
