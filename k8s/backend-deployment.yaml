@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bmw-backend
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bmw-backend
+  template:
+    metadata:
+      labels:
+        app: bmw-backend
+    spec:
+      containers:
+      - name: backend
+        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: bmw-db-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bmw-backend-service
+  namespace: default
+spec:
+  selector:
+    app: bmw-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

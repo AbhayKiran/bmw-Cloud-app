@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bmw-ingress
+  namespace: default
+  annotations:
+    # If using Nginx Ingress Controller:
+    kubernetes.io/ingress.class: "nginx"
+    # Optional: rewrites path if your backend expects root traffic
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      # 1. Route API traffic to your Spring Boot backend
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: bmw-backend-service
+            port:
+              number: 8080
+              
+      # 2. Route all other web traffic to your Nginx frontend
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bmw-frontend-service
+            port:
+              number: 80
