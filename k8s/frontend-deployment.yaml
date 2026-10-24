@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:latest
+        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:__IMAGE_TAG__
         ports:
         - containerPort: 80
 ---
