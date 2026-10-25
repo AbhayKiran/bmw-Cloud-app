@@ -50,9 +50,9 @@ update_manifests:
     - sed -i "s|__IMAGE_TAG__|$CI_COMMIT_SHA|g" k8s/backend-deployment.yaml
     - sed -i "s|__IMAGE_TAG__|$CI_COMMIT_SHA|g" k8s/frontend-deployment.yaml
     
-    # Stage and commit the changed manifest files back to the current branch
+    # Stage and commit using single quotes for the YAML string to avoid quote conflicts
     - git add k8s/backend-deployment.yaml k8s/frontend-deployment.yaml
-    - git commit -m "chore: update image tag to $CI_COMMIT_SHA [skip ci]"
+    - git commit -m "chore-update-image-tag-$CI_COMMIT_SHA"
     
     # Push back to the repository using GitLab CI job token
     - git push https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
