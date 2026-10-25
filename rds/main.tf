@@ -7,6 +7,20 @@ data "terraform_remote_state" "network" {
   }
 }
 
+# 1. Look up your pre-existing secret securely from AWS Secrets Manager
+data "aws_secretsmanager_secret" "db_secret" {
+  name = "bmw/dev/db-credentials"
+}
+
+data "aws_secretsmanager_secret_version" "db_secret_val" {
+  secret_id = data.aws_secretsmanager_secret.db_secret.id
+}
+
+# Parse the password out of the secret JSON securely in memory
+locals  {
+  db_password = jsondecode(data.aws_secretsmanager_secret_version.db_secret_val.secret_string)["password"]
+}
+
 # Security group for RDS allowing access from VPC
 resource "aws_security_group" "rds" {
   name        = "bmw-dev-rds-sg"
@@ -29,10 +43,9 @@ resource "aws_security_group" "rds" {
   }
 }
 
-# Explicitly bind the DB to your custom VPC's private subnets
 resource "aws_db_subnet_group" "rds" {
-  name        = "bmw-dev-db-subnet-group"
-  subnet_ids  = data.terraform_remote_state.network.outputs.private_subnet_ids
+  name       = "bmw-dev-db-subnet-group"
+  subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
   description = "Database subnet group for BMW dev RDS"
 }
 
@@ -53,9 +66,9 @@ module "db" {
 
   db_name  = "bmwdb"
   username = "dbadmin"
+  password = local.db_password # <--- Uses the secure local lookup
   port     = 5432
 
-  # Use the explicit subnet group in your custom VPC
   create_db_subnet_group = false
   db_subnet_group_name   = aws_db_subnet_group.rds.name
   vpc_security_group_ids = [aws_security_group.rds.id]
@@ -68,32 +81,7 @@ module "db" {
   skip_final_snapshot = true
 }
 
-# Generate a secure random password for the database
-resource "random_password" "db_password" {
-  length  = 16
-  special = false # RDS sometimes has issues with certain special characters in URLs
-}
-
-# Store the database credentials securely in AWS Secrets Manager
-resource "aws_secretsmanager_secret" "db_secret" {
-  name                    = "bmw/dev/rds"
-  recovery_window_in_days = 0 # Allows immediate deletion during dev destroy
-}
-
-resource "aws_secretsmanager_secret_version" "db_secret_val" {
-  secret_id     = aws_secretsmanager_secret.db_secret.id
-  secret_string = jsonencode({
-    username = "dbadmin"
-    password = random_password.db_password.result
-    engine   = "postgres"
-    host     = module.db.db_instance_address
-    port     = 5432
-    dbname   = "bmwdb"
-  })
-}
-
-
-# 1. Fetch your EKS worker node IAM role name from your EKS Terraform state (or define it)
+# EKS IAM Roles
 data "terraform_remote_state" "eks" {
   backend = "s3"
   config = {
@@ -103,7 +91,6 @@ data "terraform_remote_state" "eks" {
   }
 }
 
-# 2. Create an IAM policy allowing read access to the database secret
 resource "aws_iam_policy" "secrets_reader" {
   name        = "bmw-dev-rds-secret-reader"
   description = "Allows EKS nodes to read the RDS database secret from AWS Secrets Manager"
@@ -117,13 +104,12 @@ resource "aws_iam_policy" "secrets_reader" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = aws_secretsmanager_secret.db_secret.arn
+        Resource = data.aws_secretsmanager_secret.db_secret.arn
       }
     ]
   })
 }
 
-# 3. Attach that policy directly to your EKS worker node IAM role
 resource "aws_iam_role_policy_attachment" "eks_secrets_attach" {
   role       = data.terraform_remote_state.eks.outputs.node_role_name
   policy_arn = aws_iam_policy.secrets_reader.arn

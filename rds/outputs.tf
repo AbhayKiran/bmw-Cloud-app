@@ -9,6 +9,5 @@ output "db_name" {
 }
 
 output "secret_arn" {
-  description = "AWS Secrets Manager Secret ARN"
-  value       = aws_secretsmanager_secret.db_secret.arn
+  value = data.aws_secretsmanager_secret.db_secret.arn
 }
