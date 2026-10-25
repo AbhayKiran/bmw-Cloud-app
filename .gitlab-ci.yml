@@ -32,7 +32,7 @@ build_and_push:
     # Build and Push Frontend
     - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest ./frontend
     - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA
-    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:lates
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest
 
 update_manifests:
   stage: update_manifest
@@ -47,5 +47,4 @@ update_manifests:
     - sed -i "s|__IMAGE_TAG__|$CI_COMMIT_SHA|g" k8s/frontend-deployment.yaml
     - git add k8s/backend-deployment.yaml k8s/frontend-deployment.yaml
     - git commit -m "chore-update-image-tag-$CI_COMMIT_SHA"
-    # Use your custom token variable here:
     - git push https://oauth2:${GITLAB_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
