@@ -32,7 +32,7 @@ build_and_push:
     # Build and Push Frontend
     - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest ./frontend
     - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:$CI_COMMIT_SHA
-    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:latest
+    - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/bmw-frontend:lates
 
 update_manifests:
   stage: update_manifest
@@ -41,18 +41,11 @@ update_manifests:
     - apk add --no-cache git
   script:
     - echo "Updating Kubernetes manifests with new image tag..."
-    
-    # Configure Git user for the runner
     - git config --global user.name "GitLab CI Bot"
     - git config --global user.email "gitlab-ci@bot.local"
-    
-    # Dynamically inject the commit SHA into the deployment manifests
     - sed -i "s|__IMAGE_TAG__|$CI_COMMIT_SHA|g" k8s/backend-deployment.yaml
     - sed -i "s|__IMAGE_TAG__|$CI_COMMIT_SHA|g" k8s/frontend-deployment.yaml
-    
-    # Stage and commit using single quotes for the YAML string to avoid quote conflicts
     - git add k8s/backend-deployment.yaml k8s/frontend-deployment.yaml
     - git commit -m "chore-update-image-tag-$CI_COMMIT_SHA"
-    
-    # Push back to the repository using GitLab CI job token
-    - git push https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+    # Use your custom token variable here:
+    - git push https://oauth2:${GITLAB_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
