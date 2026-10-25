@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:__IMAGE_TAG__
+        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-backend:c0c6123b7b7f7b4d9e5fa01f8b8cb06f50003f4e
         ports:
         - containerPort: 8080
         envFrom:
