@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:8cbb385b98143f82aacde0d75a8df08184ea4a55
+        image: 699960288562.dkr.ecr.ap-south-1.amazonaws.com/bmw-frontend:__IMAGE_TAG__
         ports:
         - containerPort: 80
 ---
